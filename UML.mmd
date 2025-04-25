@@ -33,14 +33,14 @@ classDiagram
       -mapping moderator_to_challenge_ids
 
       -total_challenges: uint256
-      -pendingChallenges: uint256
+      -pending_challenges: uint256
       -quorum: uint256
       -pass_threshold: uint256
 
-      +contributeChallenge(string titleUrl, string descriptionUrl, string category, string contributeAt) void
-      +finalizeChallenge(uint256 challenge_id) void
+      +_contribute_challenge(string _title_url, string _description_url, string _category, string _contribute_at) void
+      +_finalize_challenge(uint256 _challenge_id) void
 
-      +getChallengesByContributor(address contributor_address) Challenge[]
+      +_get_challenges_by_contributor(address _contributor_address) Challenge[]
       +getPendingChallenges( ) Challenge[]
     }
 
