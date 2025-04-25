@@ -1,0 +1,121 @@
+
+classDiagram
+    class UserManager {
+       %% mapping(user_address: address => User)
+      -mapping users 
+      %% mapping(username: string => bool)
+      -mapping username_taken
+
+      +setUserPersonalData(string _username, string _avatar_url, string _bio_url) void
+      +setUsername(string _username) void
+      +setAvatar(string _avatar_url) void
+      +setBio(string _bio_url) void
+      +getUsername(address user_address) string
+      +getAvatar(address user_address) string
+      +getBio(address user_address) string
+      +checkUsernameAvailable(string _username) bool
+    }
+
+    class User {
+      +username: string
+      +avatar_url: string
+      +bio_url: string
+    }
+    
+    class ChallengeManager {
+      %% mapping(challenge_id:uint256 => Challenge)
+      -mapping challenges
+      %% mapping(challenge_id:uint256 => ReviewPool)
+      -mapping review_pools
+      %% mapping(contributor_addr:address => uint256[])
+      -mapping contributor_to_challenges_ids
+      %% mapping(moderator_addr:address => uint256[])
+      -mapping moderator_to_challenge_ids
+
+      -total_challenges: uint256
+      -pendingChallenges: uint256
+      -quorum: uint256
+      -pass_threshold: uint256
+
+      +contributeChallenge(string titleUrl, string descriptionUrl, string category, string contributeAt) void
+      +finalizeChallenge(uint256 challenge_id) void
+
+      +getChallengesByContributor(address contributor_address) Challenge[]
+      +getPendingChallenges( ) Challenge[]
+    }
+
+    class Challenge {
+      +string id
+      +address contributor
+      +string title_url
+      +string description_url
+      +string category
+      +uint256 time_created
+      +ChallengeStatus status
+      +uint256 quality_score
+      +DifficultyLevel difficulty_level
+      +uint256 solve_time
+      +string[] tags
+    }
+
+    class ModeratorReview {
+      +address moderator
+      +uint256 challenge_id
+      +uint256 review_time
+      +bool relevance
+      +bool technical_correctness
+      +bool completeness
+      +bool clarity
+      +bool originality
+      +bool unbiased
+      +bool plagiarism_free
+      +DifficultyLevel suggested_difficulty
+      +Category suggested_category
+      +number suggested_solve_time
+      +string[] suggested_tags
+    }
+
+
+    class ReviewPool {
+      +address[] moderator_list
+      +uint256 total_reviews
+      +ModeratorReview[] moderator_reviews
+      +mapping moderator_to_review_pool_id
+    }
+
+
+    %% Enumerations as classes with <<enumeration>> stereotype
+    class ChallengeStatus {
+      <<enumeration>>
+      +OPEN
+      +IN_PROGRESS
+      +FINALIZED
+      +CANCELLED
+    }
+    class DifficultyLevel {
+      <<enumeration>>
+      +EASY
+      +MEDIUM
+      +HARD
+      +EXPERT
+    }
+    class Category {
+      <<enumeration>>
+      +ALGORITHMS
+      +DATA_STRUCTURES
+      +MATH
+      +DEBUGGING
+      +SECURITY
+    }
+    
+    
+    %% Relationships among Primary Domain Classes
+    UserManager *-- User 
+    ChallengeManager *-- Challenge 
+    ChallengeManager *-- ReviewPool 
+    ReviewPool *-- ModeratorReview 
+    Challenge --> ChallengeStatus 
+    Challenge --> DifficultyLevel 
+    Challenge --> Category 
+    ModeratorReview --> DifficultyLevel
+    ModeratorReview --> Category
