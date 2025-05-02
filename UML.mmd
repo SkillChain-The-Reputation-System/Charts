@@ -1,4 +1,3 @@
-
 classDiagram
     class UserManager {
        %% mapping(user_address: address => User)
@@ -28,20 +27,38 @@ classDiagram
       %% mapping(challenge_id:uint256 => ReviewPool)
       -mapping review_pools
       %% mapping(contributor_addr:address => uint256[])
-      -mapping contributor_to_challenges_ids
+      -mapping contributor_to_challenges
       %% mapping(moderator_addr:address => uint256[])
-      -mapping moderator_to_challenge_ids
+      -mapping moderator_to_challenges
+      %% mapping(challenge_id:uint256 => AggregatedMeta)
+      -mapping challenge_to_aggregated_meta
 
-      -total_challenges: uint256
-      -pending_challenges: uint256
-      -quorum: uint256
-      -pass_threshold: uint256
+      +total_challenges: uint256
+      +pending_challenges: uint256
+      +REVIEW_QUORUM: uint256
+      +REVIEW_THRESHOLD: uint256
+      +NUMBER_OF_QUALITY_FACTORS: uint256
+      +MAX_DOMAINS: uint256
+      +MAX_DIFFICULTY_LEVEL: uint256
 
-      +_contribute_challenge(string _title_url, string _description_url, string _category, string _contribute_at) void
-      +_finalize_challenge(uint256 _challenge_id) void
+      %% CONTRIBUTION
+      +contributeChallenge(string _title_url, string _description_url, string _category, string _contribute_at) void
 
-      +_get_challenges_by_contributor(address _contributor_address) Challenge[]
+      %% MODERATION
+      +finalizeChallenge(uint256 _challenge_id) void
+      +joinReviewPool(uint256 _challenge_id) void
+      +submitModeratorReview(uint256 _challenge_id, ....) void
+
+      %% GETTER
+      +getChallengeById(uint256 _challenge_id) Challenge
+      +getChallengesByContributor(address _contributor_address) Challenge[]
       +getPendingChallenges( ) Challenge[]
+
+      +getChallengesByModerator(address _moderator_address) Challenge[]
+      +getModeratorReviewOfChallenge(uint256 challenge_id, address _moderator_address) ModeratorReview
+      +getJoinReviewPoolStatus(uint256 _challenge_id, address _moderator_address) bool
+      +getReviewQuorum( ) uint256
+      +getChallengeFinalizedStatus(uint256 _challenge_id) bool
     }
 
     class Challenge {
@@ -78,34 +95,50 @@ classDiagram
 
     class ReviewPool {
       +address[] moderator_list
-      +uint256 total_reviews
-      +ModeratorReview[] moderator_reviews
-      +mapping moderator_to_review_pool_id
+      +bool is_finalized
+      +uint256 review_count
+      %% mapping(moderator_address:address => ModeratorReview)
+      +mapping moderator_reviews
+      %% mapping(moderator_address:address => bool)
+      +mapping moderator_to_join_status
+    }
+
+    class AggregatedMeta {
+      +uint256[] difficulty_weight
+      +uint256[] category_weight
+      +uint256 estimated_solve_time
     }
 
 
     %% Enumerations as classes with <<enumeration>> stereotype
     class ChallengeStatus {
       <<enumeration>>
-      +OPEN
-      +IN_PROGRESS
-      +FINALIZED
-      +CANCELLED
+      +PENDING
+      +APPROVED
+      +REJECTED
     }
     class DifficultyLevel {
       <<enumeration>>
       +EASY
       +MEDIUM
       +HARD
-      +EXPERT
     }
     class Category {
       <<enumeration>>
-      +ALGORITHMS
-      +DATA_STRUCTURES
-      +MATH
-      +DEBUGGING
-      +SECURITY
+      +COMPUTER_SCIENCE_FUNDAMENTALS
+      +SOFTWARE_DEVELOPMENT
+      +SYSTEMS_AND_NETWORKING
+      +CYBERSECURITY
+      +DATA_SCIENCE_AND_ANALYTICS
+      +DATABASE_ADMINISTRATION
+      +QUALITY_ASSURANCE_AND_TESTING
+      +PROJECT_MANAGEMENT
+      +USER_EXPERIENCE_AND_DESIGN
+      +BUSINESS_ANALYSIS
+      +ARTIFICIAL_INTELLIGENCE
+      +BLOCKCHAIN_AND_CRYPTOCURRENCY
+      +NETWORK_ADMINISTRATION
+      +CLOUD_COMPUTING
     }
     
     
@@ -113,6 +146,7 @@ classDiagram
     UserManager *-- User 
     ChallengeManager *-- Challenge 
     ChallengeManager *-- ReviewPool 
+    ChallengeManager *-- AggregatedMeta
     ReviewPool *-- ModeratorReview 
     Challenge --> ChallengeStatus 
     Challenge --> DifficultyLevel 
