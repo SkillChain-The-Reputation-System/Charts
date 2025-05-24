@@ -1,0 +1,21 @@
+stateDiagram-v2
+    [*] --> PENDING : Application submitted
+    
+    PENDING --> REVIEWING : HR begins review
+    PENDING --> WITHDRAWN : Applicant withdraws
+    
+    REVIEWING --> SHORTLISTED : Meets requirements
+    REVIEWING --> REJECTED : Does not meet requirements
+    REVIEWING --> WITHDRAWN : Applicant withdraws
+    
+    SHORTLISTED --> INTERVIEWING : Selected for interview
+    SHORTLISTED --> REJECTED : Position filled
+    SHORTLISTED --> WITHDRAWN : Applicant withdraws
+    
+    INTERVIEWING --> HIRED : Offer accepted
+    INTERVIEWING --> REJECTED : Not selected
+    INTERVIEWING --> WITHDRAWN : Applicant withdraws
+    
+    HIRED --> [*] : Process complete
+    REJECTED --> [*] : Process complete
+    WITHDRAWN --> [*] : Process complete

@@ -1,0 +1,12 @@
+stateDiagram-v2
+    [*] --> DRAFT           : create
+    DRAFT --> OPEN          : publish
+    OPEN --> PAUSED         : pause
+    PAUSED --> OPEN         : resume
+    OPEN --> FILLED         : position filled
+    OPEN --> CLOSED         : close without fill
+    PAUSED --> CLOSED       : cancel from pause
+    FILLED --> CLOSED       : close after fill
+    CLOSED --> ARCHIVED     : archive
+    DRAFT --> ARCHIVED      : archive
+    ARCHIVED --> [*]
