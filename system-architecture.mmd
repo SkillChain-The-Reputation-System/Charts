@@ -1,0 +1,63 @@
+---
+title: SkillChain - Sơ đồ kiến trúc hệ thống
+---
+flowchart TD
+    %% User Interface Layer
+    User[👤 User] --> Vercel[(🌐 Vercel Hosting)]
+    Vercel --> NextJS[📱 NextJS App]
+    
+    %% Frontend Components
+    NextJS --> RadixUI[🎨 Radix UI]
+    NextJS --> TailwindCSS[💅 Tailwind CSS]
+    
+    %% Web3 Integration Layer
+    NextJS --> Wagmi[🔗 Wagmi]
+    Wagmi --> ConnectKit[🔌 ConnectKit]
+    ConnectKit --> Wallets[💳 Crypto Wallets]
+    
+    %% Smart Contract Layer
+    Wagmi --> SmartContracts[📜 Smart Contracts]
+    
+    %% Infrastructure & Development
+    subgraph Infrastructure [Development Infrastructure]
+        NodeJS[🟢 NodeJS]
+        Hardhat[🔨 Hardhat]
+    end
+    
+    NodeJS --> Hardhat
+    Hardhat --> SmartContracts
+    
+    %% Blockchain Networks
+    subgraph Networks [🌐 Blockchain Networks]
+        Localhost[🏠 Local Network]
+        AmoyTestnet[🧪 Amoy Testnet]
+    end
+    
+    SmartContracts --> Localhost
+    SmartContracts --> AmoyTestnet
+    
+    %% External Services
+    subgraph ExternalServices [External Services]
+        Irys[💾 Irys Storage]
+        Jitsi[📹 Jitsi Meet]
+    end
+    
+    NextJS --> Irys
+    NextJS --> Jitsi
+    
+    %% Styling
+    classDef userLayer fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef frontendLayer fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef web3Layer fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef contractLayer fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef infraLayer fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef networkLayer fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+    classDef externalLayer fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    
+    class User userLayer
+    class Vercel,NextJS,RadixUI,TailwindCSS frontendLayer
+    class Wagmi,ConnectKit,Wallets web3Layer
+    class SmartContracts contractLayer
+    class NodeJS,Hardhat infraLayer
+    class Localhost,AmoyTestnet networkLayer
+    class Irys,Jitsi externalLayer
