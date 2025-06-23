@@ -1,0 +1,92 @@
+%% Kiến trúc ứng dụng SkillChain
+flowchart TB
+    subgraph "Người dùng cuối"
+        direction LR
+        EndUser["👤 Người dùng<br/>(Talent, Contributor, Evaluator, Moderator)"]
+        Recruiter["🏢 Nhà tuyển dụng<br/>(Recruiter)"]
+    end
+    
+    subgraph "Frontend Layer"
+        direction TB
+        WebApp["🌐 Next.js DApp<br/>(React + TypeScript + Web3)"]
+    end
+    
+    subgraph "Blockchain Layer"
+        direction TB
+        
+        subgraph "Core System"
+            direction LR
+            ReputationManager["📊 ReputationManager<br/>(Quản lý điểm uy tín)"]
+            RoleManager["🔐 RoleManager<br/>(Quản lý vai trò & quyền hạn)"]
+        end
+        
+        subgraph "Challenge System"
+            direction TB
+            ChallengeManager["🎯 ChallengeManager<br/>(Quản lý thử thách)"]
+            SolutionManager["💡 SolutionManager<br/>(Quản lý giải pháp)"]
+            ModerationEscrow["⚖️ ModerationEscrow<br/>(Escrow cho moderation)"]
+            ChallengeCostManager["💰 ChallengeCostManager<br/>(Quản lý phí tham gia)"]
+        end
+        
+        subgraph "Recruitment System"
+            direction TB
+            JobManager["💼 JobManager<br/>(Quản lý công việc)"]
+            ApplicationManager["📝 JobApplicationManager<br/>(Quản lý ứng tuyển)"]
+            MeetingManager["🤝 MeetingManager<br/>(Quản lý cuộc họp)"]
+            RecruiterSubscription["💳 RecruiterSubscription<br/>(Quản lý gói đăng ký)"]
+        end
+        
+        subgraph "Data Management"
+            direction LR
+            RecruiterDataManager["📋 RecruiterDataManager<br/>(Dữ liệu recruiter)"]
+            UserDataManager["👥 UserDataManager<br/>(Dữ liệu người dùng)"]
+        end
+    end
+    
+    subgraph "Storage Layer"
+        direction TB
+        IrysStorage[("☁️ Irys Storage<br/>(Off-chain data storage)")]
+    end
+    
+    %% User Interactions
+    EndUser --> WebApp
+    Recruiter --> WebApp
+    
+    %% Frontend to Smart Contracts
+    WebApp -->|"Web3 calls"| ChallengeManager
+    WebApp -->|"Web3 calls"| SolutionManager  
+    WebApp -->|"Web3 calls"| JobManager
+    WebApp -->|"Web3 calls"| ApplicationManager
+    WebApp -->|"Web3 calls"| MeetingManager
+    WebApp -->|"Web3 calls"| ReputationManager
+    WebApp -->|"Web3 calls"| RoleManager
+    WebApp -->|"Web3 calls"| RecruiterSubscription
+    WebApp -->|"Web3 calls"| RecruiterDataManager
+    WebApp -->|"Web3 calls"| UserDataManager
+    
+    %% Core System Relationships
+    ReputationManager <-->|"cập nhật vai trò dựa trên điểm"| RoleManager
+    
+    %% Challenge System Relationships
+    ChallengeManager -->|"quản lý quỹ thưởng"| ModerationEscrow
+    ChallengeManager -->|"tương tác"| SolutionManager
+    ChallengeManager -->|"cập nhật điểm uy tín"| ReputationManager
+    ChallengeManager -->|"thu phí tham gia"| ChallengeCostManager
+    ChallengeManager -->|"kiểm tra quyền Contributor/Moderator"| RoleManager
+    SolutionManager -->|"cập nhật điểm uy tín"| ReputationManager
+    SolutionManager -->|"kiểm tra quyền Evaluator"| RoleManager
+    
+    %% Recruitment System Relationships  
+    JobManager -->|"kiểm tra ngân sách"| RecruiterSubscription
+    ApplicationManager -->|"trừ phí tuyển dụng"| RecruiterSubscription
+    MeetingManager -->|"xác minh quyền hạn"| RecruiterSubscription
+    
+    %% Data Storage Relationships
+    ChallengeManager -.->|"lưu content ID"| IrysStorage
+    SolutionManager -.->|"lưu solution data"| IrysStorage
+    JobManager -.->|"lưu job content"| IrysStorage
+    RecruiterDataManager -.->|"lưu recruiter profile"| IrysStorage
+    UserDataManager -.->|"lưu user profile"| IrysStorage
+    
+    %% Frontend Storage Access
+    WebApp <-->|"upload/download data"| IrysStorage
