@@ -1,0 +1,41 @@
+@startuml
+entity User {
+  *address : address <<PK>>
+  data_id : string
+}
+
+entity RecruiterProfile {
+  *recruiter_address : address <<PK>>
+  data_id : string
+}
+
+entity Job {
+  *id : bytes32 <<PK>>
+  recruiter : address <<FK>>
+  content_id : string
+  created_at : uint256
+  status : JobStatus
+}
+
+entity Application {
+  *id : bytes32 <<PK>>
+  job_id : bytes32 <<FK>>
+  applicant : address <<FK>>
+  applied_at : uint256
+  status : ApplicationStatus
+}
+
+entity Meeting {
+  *id : bytes32 <<PK>>
+  application_id : bytes32 <<FK>>
+  txid : string
+  status : MeetingStatus
+  created_at : uint256
+  ended_at : uint256
+}
+
+RecruiterProfile ||--o{ Job : posts
+Job ||--o{ Application : receives >
+Application ||--o{ Meeting : schedules >
+User ||--o{ Application : applies >
+@enduml

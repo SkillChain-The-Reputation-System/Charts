@@ -1,0 +1,30 @@
+@startuml
+entity User {
+  *address : address <<PK>>
+  data_id : string
+}
+
+entity RecruiterProfile {
+  *recruiter_address : address <<PK>>
+  data_id : string
+}
+
+entity PaymentRecord {
+  *recordId : bytes32 <<PK>>
+  recruiter : address <<FK>>
+  applicant : address <<FK>>
+  amount : uint256
+  timestamp : uint256
+}
+
+entity Reputation {
+  *user : address <<FK>>
+  domain : Domain <<PK>>
+  domain_reputation : int256
+  global_reputation : int256
+}
+
+RecruiterProfile ||--o{ PaymentRecord : makes >
+User ||--o{ PaymentRecord : contains <
+User ||--o{ Reputation : has >
+@enduml

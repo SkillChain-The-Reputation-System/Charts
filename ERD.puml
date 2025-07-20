@@ -1,0 +1,146 @@
+@startuml
+entity User {
+  *address : address <<PK>>
+  data_id : string
+}
+
+entity RecruiterProfile {
+  *recruiter_address : address <<PK>>
+  data_id : string
+}
+
+entity Challenge {
+  *id : bytes32 <<PK>>
+  contributor : address <<FK>>
+  txid : string
+  category : Domain
+  contributed_at : uint256
+  participants : uint256
+  quality_score : uint256
+  difficulty_level : DifficultyLevel
+  solve_time : uint256
+  status : ChallengeStatus
+}
+
+entity ModeratorReview {
+  *moderator : address <<FK>>
+  *challenge_id : bytes32 <<FK>>
+  review_time: uint256
+  review_txid : string
+  is_submitted: bool
+  relevance : QualityFactorAnswer
+  technical_correctness : QualityFactorAnswer
+  completeness : QualityFactorAnswer
+  clarity : QualityFactorAnswer
+  originality : QualityFactorAnswer
+  unbiased : QualityFactorAnswer
+  plagiarism_free : QualityFactorAnswer
+  suggested_difficulty : DifficultyLevel
+  suggested_category : Domain
+  suggested_solve_time : uint256
+  review_score : uint256
+}
+
+entity Solution {
+  *id : bytes32 <<PK>>
+  user : address <<FK>>
+  challenge_id : bytes32 <<FK>>
+  solution_txid : string
+  created_at : uint256
+  submitted_at : uint256
+  progress : SolutionProgress
+  score : uint256
+}
+
+entity EvaluationPool {
+  *solution_id : bytes32 <<PK>>
+  total_evaluators : uint256
+  evaluation_count : uint256
+  completed_at : uint256
+}
+
+entity Evaluation {
+  *solution_id : bytes32 <<FK>>
+  *evaluator : address <<FK>>
+  evaluation_score : uint256
+  submitted_at : uint256
+}
+
+entity Job {
+  *id : bytes32 <<PK>>
+  recruiter : address <<FK>>
+  content_id : string
+  created_at : uint256
+  status : JobStatus
+}
+
+entity Application {
+  *id : bytes32 <<PK>>
+  job_id : bytes32 <<FK>>
+  applicant : address <<FK>>
+  applied_at : uint256
+  status : ApplicationStatus
+}
+
+entity Meeting {
+  *id : bytes32 <<PK>>
+  application_id : bytes32 <<FK>>
+  txid : string
+  status : MeetingStatus
+  created_at : uint256
+  ended_at : uint256
+}
+
+entity PaymentRecord {
+  *recordId : bytes32 <<PK>>
+  recruiter : address <<FK>>
+  applicant : address <<FK>>
+  amount : uint256
+  timestamp : uint256
+}
+
+entity Pot {
+  *challenge_id : bytes32 <<PK>>
+  bounty : uint256
+  total_reward : uint256
+  is_distributed : bool
+}
+
+entity ChallengeRevenue {
+  *challenge_id : bytes32 <<PK>>
+  total_revenue : uint256
+}
+
+entity ReviewPool {
+  *challenge_id : bytes32 <<PK>>
+  is_finalized : bool
+  review_count : uint256
+}
+
+entity Reputation {
+  *user : address <<FK>>
+  domain : Domain <<PK>>
+  domain_reputation : int256
+  global_reputation : int256
+}
+
+User ||--o{ Challenge : contributes >
+User ||--o{ Solution : solves >
+User ||--o{ Reputation : has >
+Challenge ||--o{ ModeratorReview : has >
+Challenge ||--|| ReviewPool : has >
+Challenge ||--o{ Solution : contains >
+Solution ||--|| EvaluationPool : has >
+EvaluationPool ||--o{ Evaluation : contains >
+Job ||--o{ Application : receives >
+Application ||--o{ Meeting : schedules >
+RecruiterProfile ||--o{ PaymentRecord : makes >
+RecruiterProfile ||--o{ Job : posts
+User ||--o{ PaymentRecord : contains <
+Challenge ||--|| Pot : has >
+Challenge ||--|| ChallengeRevenue : revenue >
+User ||--o{ Evaluation : evaluates >
+User ||--o{ ModeratorReview : moderates >
+User ||--o{ Application : applies >
+ReviewPool ||--o{ ModeratorReview : contains >
+@enduml

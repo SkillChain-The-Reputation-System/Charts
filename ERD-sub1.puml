@@ -1,0 +1,65 @@
+@startuml
+
+entity User {
+  *address : address <<PK>>
+  data_id : string
+}
+
+entity Challenge {
+  *id : bytes32 <<PK>>
+  contributor : address <<FK>>
+  txid : string
+  category : Domain
+  contributed_at : uint256
+  participants : uint256
+  quality_score : uint256
+  difficulty_level : DifficultyLevel
+  solve_time : uint256
+  status : ChallengeStatus
+}
+
+entity ModeratorReview {
+  *moderator : address <<FK>>
+  *challenge_id : bytes32 <<FK>>
+  review_time: uint256
+  review_txid : string
+  is_submitted: bool
+  relevance : QualityFactorAnswer
+  technical_correctness : QualityFactorAnswer
+  completeness : QualityFactorAnswer
+  clarity : QualityFactorAnswer
+  originality : QualityFactorAnswer
+  unbiased : QualityFactorAnswer
+  plagiarism_free : QualityFactorAnswer
+  suggested_difficulty : DifficultyLevel
+  suggested_category : Domain
+  suggested_solve_time : uint256
+  review_score : uint256
+}
+
+entity ReviewPool {
+  *challenge_id : bytes32 <<PK>>
+  is_finalized : bool
+  review_count : uint256
+}
+
+entity Pot {
+  *challenge_id : bytes32 <<PK>>
+  bounty : uint256
+  total_reward : uint256
+  is_distributed : bool
+}
+
+entity ChallengeRevenue {
+  *challenge_id : bytes32 <<PK>>
+  total_revenue : uint256
+}
+
+User ||--o{ Challenge : contributes >
+Challenge ||--o{ ModeratorReview : has >
+Challenge ||--|| ReviewPool : has >
+ReviewPool ||--o{ ModeratorReview : contains >
+Challenge ||--|| Pot : has >
+Challenge ||--|| ChallengeRevenue : revenue >
+User ||--o{ ModeratorReview : moderates >
+@enduml

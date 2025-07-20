@@ -1,0 +1,24 @@
+@startuml
+actor User
+
+node "Browser" {
+    component "Next.js Frontend"
+    component "Wallet\n(MetaMask/\nWalletConnect)"
+}
+
+cloud "Blockchain Network\n(Polygon Amoy or Local Hardhat)" {
+    component "Smart Contracts"
+}
+
+database "RPC Endpoint\n(Alchemy / Hardhat Node)" as RPC
+
+component "Jitsi Meet\n(Video Calls)" as Jitsi
+
+User --> "Next.js Frontend" : HTTP/S
+"Next.js Frontend" --> "Wallet\n(MetaMask/\nWalletConnect)" : Đăng nhập / Ký giao dịch
+"Next.js Frontend" --> RPC : JSON-RPC (wagmi + viem)
+RPC --> "Blockchain Network\n(Polygon Amoy or Local Hardhat)"
+
+"Next.js Frontend" --> Jitsi : API gọi video
+
+@enduml

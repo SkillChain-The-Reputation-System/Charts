@@ -1,0 +1,50 @@
+@startuml
+entity User {
+  *address : address <<PK>>
+  data_id : string
+}
+
+entity Challenge {
+  *id : bytes32 <<PK>>
+  contributor : address <<FK>>
+  txid : string
+  category : Domain
+  contributed_at : uint256
+  participants : uint256
+  quality_score : uint256
+  difficulty_level : DifficultyLevel
+  solve_time : uint256
+  status : ChallengeStatus
+}
+
+entity Solution {
+  *id : bytes32 <<PK>>
+  user : address <<FK>>
+  challenge_id : bytes32 <<FK>>
+  solution_txid : string
+  created_at : uint256
+  submitted_at : uint256
+  progress : SolutionProgress
+  score : uint256
+}
+
+entity EvaluationPool {
+  *solution_id : bytes32 <<PK>>
+  total_evaluators : uint256
+  evaluation_count : uint256
+  completed_at : uint256
+}
+
+entity Evaluation {
+  *solution_id : bytes32 <<FK>>
+  *evaluator : address <<FK>>
+  evaluation_score : uint256
+  submitted_at : uint256
+}
+
+User ||--o{ Solution : solves >
+Challenge ||--o{ Solution : contains >
+Solution ||--|| EvaluationPool : has >
+EvaluationPool ||--o{ Evaluation : contains >
+User ||--o{ Evaluation : evaluates >
+@enduml

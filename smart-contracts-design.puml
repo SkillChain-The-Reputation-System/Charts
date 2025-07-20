@@ -1,0 +1,45 @@
+@startuml
+!define AWSPUML https://raw.githubusercontent.com/awslabs/aws-icons-for-plantuml/v14.0/LATEST/AWSCommon.puml
+' define placeholders for components
+' but we only use generic components, not AWS
+' PlantUML component diagram for SkillChain backend contracts
+
+package "SkillChain Backend" {
+  component RoleManager
+  component UserDataManager
+  component ReputationManager
+  component JobManager
+  component JobApplicationManager
+  component MeetingManager
+  component RecruiterSubscription
+  component RecruiterDataManager
+  component ChallengeManager
+  component SolutionManager
+  component ChallengeCostManager
+  component ModerationEscrow
+}
+
+RoleManager --down--> ReputationManager : kiểm tra uy tín cho vai trò
+ReputationManager --down--> RoleManager : cấp hoặc thu hồi vai trò
+
+JobManager --> RecruiterSubscription : xác minh ngân sách nhà tuyển dụng
+JobApplicationManager --> JobManager : truy vấn thông tin công việc
+JobApplicationManager --> RecruiterSubscription : thanh toán phí tuyển dụng
+MeetingManager --> RecruiterSubscription : xác minh nhà tuyển dụng
+RecruiterDataManager --> RecruiterSubscription : xác minh nhà tuyển dụng
+RecruiterSubscription --> ReputationManager : đọc uy tín ứng viên
+
+ChallengeManager --> RoleManager : xác minh người đóng góp/người kiểm duyệt
+ChallengeManager --> ReputationManager : cập nhật uy tín
+ChallengeManager --> SolutionManager : quản lý giải pháp
+ChallengeManager --> ModerationEscrow : quản lý quỹ thưởng kiểm duyệt
+ChallengeManager --> ChallengeCostManager : thu phí tham gia
+SolutionManager --> ChallengeManager : truy vấn dữ liệu thử thách
+SolutionManager --> ReputationManager : cập nhật uy tín
+SolutionManager --> RoleManager : kiểm tra vai trò đánh giá
+ChallengeCostManager --> ChallengeManager : lấy thông tin thử thách
+ChallengeCostManager --> ModerationEscrow : đọc tiền thưởng
+ModerationEscrow --> ChallengeManager : lấy dữ liệu người kiểm duyệt
+ModerationEscrow --> ReputationManager : lấy uy tín người kiểm duyệt
+
+@enduml

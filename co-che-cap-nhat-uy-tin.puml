@@ -1,0 +1,32 @@
+@startmindmap
+* Cơ chế cập nhật uy tín
+** Đóng góp thử thách
+*** Xác định độ khó (W_difficulty)
+*** Tính Q_challenge sau kiểm duyệt
+*** So sánh với T_contribution
+*** ∆R_contribution
+**** Nếu Q ≤ T: L_penalty·γ·(Q/T – 1)
+**** Nếu Q > T: L_reward·γ·W_difficulty·((Q–T)/(100–T))
+** Kiểm duyệt thử thách
+*** Tính độ lệch D = |Q_challenge – s_moderate|
+*** So sánh với T_moderation
+*** ∆R_moderation
+**** Nếu D ≤ T: L_reward·ϕ·W_difficulty·(1 – D/T)
+**** Nếu D > T: L_penalty·ϕ·((T–D)/(100–T))
+** Tham gia thử thách
+*** Nhận điểm S_solution
+*** So sánh với T_participation
+*** ∆R_participation
+**** Nếu S ≤ T: L_penalty·α·(S/T – 1)
+**** Nếu S > T: L_reward·α·W_difficulty·((S–T)/(100–T))
+** Đánh giá giải pháp
+*** Tính D = |S_solution – s_evaluate|
+*** So sánh với T_evaluation
+*** ∆R_evaluation
+**** Nếu D ≤ T: L_reward·β·W_difficulty·(1 – D/T)
+**** Nếu D > T: L_penalty·β·((T–D)/(100–T))
+** Tích hợp kết quả
+*** R_domain = ∑ ∆R của 4 hoạt động
+*** R_global = ∑ R_domain_i
+*** Ứng dụng: phân quyền, tuyển dụng
+@endmindmap
